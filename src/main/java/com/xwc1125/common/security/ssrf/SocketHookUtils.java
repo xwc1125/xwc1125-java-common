@@ -1,7 +1,7 @@
 package com.xwc1125.common.security.ssrf;
 
 import java.lang.reflect.Method;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.util.SubnetUtils;
 
 /**

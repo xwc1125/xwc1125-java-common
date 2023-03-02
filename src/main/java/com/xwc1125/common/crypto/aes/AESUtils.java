@@ -3,7 +3,6 @@ package com.xwc1125.common.crypto.aes;
 import com.xwc1125.common.util.base64.Base64Utils;
 import com.xwc1125.common.util.binary.BinaryUtils;
 import com.xwc1125.common.util.string.StringUtils;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -23,6 +22,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @date 2015-7-20下午1:47:56
  */
 public class AESUtils {
+
     private static String charset = "utf-8";
 
     private static String keySecretKeySpec = "AES";
@@ -131,7 +131,6 @@ public class AESUtils {
         return Decrypt(encrypted1, sKey, ivParameter);
     }
 
-
     /**
      * from base64
      *
@@ -160,7 +159,7 @@ public class AESUtils {
      * </p>
      *
      * @param encrypted 要解密的加密后字串
-     * @param sKey      解密秘钥
+     * @param sKey 解密秘钥
      * @return 返回解密后的结果
      * @throws Exception
      * @author xwc1125
@@ -200,7 +199,7 @@ public class AESUtils {
 
     public static void main(String[] args) throws Exception {
         String sKey = "1234567890123456";
-        String ivParameter = "UGWalletAESIVStr";
+        String ivParameter = "QWWalletAESIVStr";
         // 需要加密的字串
         String cSrc = "您好";
         System.out.println("加密前的字串是：" + cSrc);

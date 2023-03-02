@@ -7,3 +7,5 @@ install:
 	mvn clean install -DskipTests
 deploy:
 	mvn clean deploy -P release -Darguments=xwc1125
+dependency-check:
+	mvn dependency-check:aggregate -Dmaven.test.skip=true
