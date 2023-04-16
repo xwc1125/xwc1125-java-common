@@ -3,8 +3,12 @@ package com.xwc1125.common.util.json;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.*;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.xwc1125.common.util.spring.SpringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,11 +25,30 @@ import java.util.List;
 public class JSON {
 
     public static final String DEFAULT_FAIL = "\"Parse failed\"";
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
+    private static ObjectMapper objectMapper;
+    private static ObjectWriter objectWriter;
     private static HashMap<PropertyNamingStrategy, ObjectMapper> extraObjectMapper = new HashMap<>();
 
+    public static void setObjectMapper(ObjectMapper objectMapper) {
+        JSON.objectMapper = objectMapper;
+    }
+
     public static ObjectMapper getObjectMapper() {
+        if (objectMapper == null) {
+            try {
+                objectMapper = SpringUtils.getBean("jacksonObjectMapper");
+            } catch (Exception e) {
+            }
+            if (objectMapper == null) {
+                try {
+                    objectMapper = SpringUtils.getBean("objectMapper");
+                } catch (Exception e) {
+                }
+            }
+            if (objectMapper == null) {
+                objectMapper = new ObjectMapper();
+            }
+        }
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
     }
@@ -52,6 +75,9 @@ public class JSON {
     }
 
     public static ObjectWriter getObjectWriter() {
+        if (objectWriter == null) {
+            objectWriter = getObjectMapper().writerWithDefaultPrettyPrinter();
+        }
         return objectWriter;
     }
 
