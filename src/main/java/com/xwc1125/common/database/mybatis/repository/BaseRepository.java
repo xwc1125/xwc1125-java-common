@@ -1,23 +1,22 @@
 package com.xwc1125.common.database.mybatis.repository;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.xwc1125.common.database.mybatis.callback.BatchCallback;
 import com.xwc1125.common.database.mybatis.callback.BatchOneCallback;
-import com.xwc1125.common.database.mybatis.entity.Query;
+import com.xwc1125.common.database.mybatis.entity.PageData;
+import com.xwc1125.common.database.mybatis.entity.PageQuery;
 import com.xwc1125.common.database.mybatis.mapper.BaseDao;
-import com.xwc1125.common.entity.response.TableData;
 import com.xwc1125.common.util.sql.EntityUtils;
+import java.lang.reflect.ParameterizedType;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Resource;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
-
-import javax.annotation.Resource;
-import java.lang.reflect.ParameterizedType;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Description: 直接继承就可用
@@ -59,6 +58,21 @@ public abstract class BaseRepository<M extends BaseDao<T>, T> {
     }
 
     /**
+     * 通过Ids查询
+     *
+     * @param ids
+     * @return
+     */
+    public List<T> selectByIds(Object[] ids) {
+        StringBuffer buf = new StringBuffer();
+        for (Object s : ids) {
+            buf.append("\"" + s + "\",");
+        }
+        String idsStr = buf.substring(0, buf.length() - 1);
+        return baseMapper.selectByIds(idsStr);
+    }
+
+    /**
      * Description: 查询列表
      * </p>
      *
@@ -82,6 +96,19 @@ public abstract class BaseRepository<M extends BaseDao<T>, T> {
      */
     public List<T> selectListAll() {
         return baseMapper.selectAll();
+    }
+
+    /**
+     * 分页返回所有结果
+     *
+     * @return
+     */
+    public PageData<T> selectListAllPage() {
+        PageQuery pageQuery = PageQuery.getPageDate();
+        PageHelper.startPage(pageQuery.getPage(), pageQuery.getLimit());
+        List<T> listAll = baseMapper.selectAll();
+        PageInfo<T> page = new PageInfo<>(listAll);
+        return PageData.parsePageInfo(page);
     }
 
     /**
@@ -208,6 +235,21 @@ public abstract class BaseRepository<M extends BaseDao<T>, T> {
     }
 
     /**
+     * 批量删除
+     *
+     * @param ids
+     * @return
+     */
+    public int deleteByIds(Object[] ids) {
+        StringBuffer buf = new StringBuffer();
+        for (Object s : ids) {
+            buf.append("\"" + s + "\",");
+        }
+        String idsStr = buf.substring(0, buf.length() - 1);
+        return baseMapper.deleteByIds(idsStr);
+    }
+
+    /**
      * Description: TODO
      * </p>
      *
@@ -237,23 +279,24 @@ public abstract class BaseRepository<M extends BaseDao<T>, T> {
      * Description: 分页查询
      * </p>
      *
-     * @param query
+     * @param pageQuery
      * @return com.xwc1125.common.entity.TableResponseInfo<T>
      * @Author: xwc1125
      * @Date: 2019-03-07 22:53:05
      */
-    public TableData<T> selectByQuery(Query query) {
+    public PageData<T> selectByQuery(PageQuery pageQuery) {
         Class<T> clazz = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
         Example example = new Example(clazz);
-        if (query.entrySet().size() > 0) {
+        if (pageQuery.entrySet().size() > 0) {
             Example.Criteria criteria = example.createCriteria();
-            for (Map.Entry<String, Object> entry : query.entrySet()) {
+            for (Map.Entry<String, Object> entry : pageQuery.entrySet()) {
                 criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
             }
         }
-        Page<Object> result = PageHelper.startPage(query.getPage(), query.getLimit());
+        PageHelper.startPage(pageQuery.getPage(), pageQuery.getLimit());
         List<T> list = baseMapper.selectByExample(example);
-        return new TableData<T>(result.getTotal(), list);
+        PageInfo pageInfo = new PageInfo(list);
+        return PageData.parsePageInfo(pageInfo);
     }
 
     /**
