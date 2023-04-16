@@ -2,7 +2,7 @@ package com.xwc1125.common.database.mybatis.service;
 
 import com.xwc1125.common.database.mybatis.callback.BatchCallback;
 import com.xwc1125.common.database.mybatis.callback.BatchOneCallback;
-
+import com.xwc1125.common.database.mybatis.entity.PageData;
 import java.util.List;
 
 /**
@@ -25,6 +25,14 @@ public interface BaseService<T> {
      * @Date: 2019-03-07 22:02:05
      */
     T selectById(Object id);
+
+    /**
+     * 通过ids查询
+     *
+     * @param ids
+     * @return
+     */
+    List<T> selectByIds(Object[] ids);
 
     /**
      * Description: 查询出单条
@@ -58,6 +66,13 @@ public interface BaseService<T> {
      * @Date: 2019-03-07 22:04:22
      */
     List<T> selectListAll();
+
+    /**
+     * 分页返回所有结果
+     *
+     * @return
+     */
+    PageData<T> selectListAllPage();
 
     /**
      * Description: 查询总记录数
@@ -135,6 +150,14 @@ public interface BaseService<T> {
      * @Date: 2019-03-07 22:05:09
      */
     int deleteById(Object id);
+
+    /**
+     * 批量删除
+     *
+     * @param ids
+     * @return
+     */
+    int deleteByIds(Object[] ids);
 
     /**
      * 批量处理【单对象】

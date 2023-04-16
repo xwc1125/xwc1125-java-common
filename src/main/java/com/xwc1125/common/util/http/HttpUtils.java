@@ -63,7 +63,7 @@ public class HttpUtils {
      * @Author: xwc1125
      * @Date: 2019-02-27 10:49:36
      */
-    public static String httpGet(HttpUrl url) throws IOException {
+    public static Response httpGet(HttpUrl url) throws IOException {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -80,7 +80,7 @@ public class HttpUtils {
      * @Author: xwc1125
      * @Date: 2019-02-27 14:27:31
      */
-    public static String httpGet(String url, Map<String, Object> map) throws IOException {
+    public static Response httpGet(String url, Map<String, Object> map) throws IOException {
         String paramString = getHttpParames(map);
         if (StringUtils.isEmpty(paramString)) {
             httpGet(HttpUrl.get(url));
@@ -128,7 +128,7 @@ public class HttpUtils {
      * @Author: xwc1125
      * @Date: 2019-02-27 10:49:53
      */
-    public static String httpPost(HttpUrl url, String content) throws IOException {
+    public static Response httpPost(HttpUrl url, String content) throws IOException {
         RequestBody requestBody = RequestBody.create(content, type);
         Request request = new Request.Builder()
                 .url(url)
@@ -147,7 +147,7 @@ public class HttpUtils {
      * @Author: xwc1125
      * @Date: 2019-02-27 14:30:24
      */
-    public static String httpPost(String url, Map<String, ?> map) throws IOException {
+    public static Response httpPost(String url, Map<String, ?> map) throws IOException {
         FormBody.Builder builder = new FormBody.Builder();
         for (Map.Entry<String, ?> entry : map.entrySet()) {
             String key = entry.getKey();
@@ -166,14 +166,11 @@ public class HttpUtils {
      * </p>
      * @param request
      *
-     * @return java.lang.String
      * @Author: xwc1125
      * @Date: 2019-02-27 11:08:57
      */
-    private static String syncRequest(OkHttpClient httpClient, Request request) throws IOException {
-        Response response = httpClient.newCall(request).execute();
-        // 返回的是string 类型
-        return response.body().string();
+    public static Response syncRequest(OkHttpClient httpClient, Request request) throws IOException {
+        return httpClient.newCall(request).execute();
     }
 
     /**
@@ -263,7 +260,7 @@ public class HttpUtils {
      * @Author: xwc1125
      * @Date: 2019-02-27 11:15:56
      */
-    public static String httpsGet(HttpUrl url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
+    public static Response httpsGet(HttpUrl url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
         OkHttpClient httpClient = sslHttpsClient();
         Request request = new Request.Builder()
                 .url(url)
@@ -282,7 +279,7 @@ public class HttpUtils {
      * @Author: xwc1125
      * @Date: 2019-02-27 11:16:31
      */
-    public static String httpsPost(HttpUrl url, String content) throws IOException, KeyManagementException, NoSuchAlgorithmException {
+    public static Response httpsPost(HttpUrl url, String content) throws IOException, KeyManagementException, NoSuchAlgorithmException {
         OkHttpClient httpClient = sslHttpsClient();
         RequestBody requestBody = RequestBody.create(content, type);
         Request request = new Request.Builder()
@@ -292,7 +289,7 @@ public class HttpUtils {
         return syncRequest(httpClient, request);
     }
 
-    public static String httpsPost(String url, Map<String, ?> map) throws IOException, KeyManagementException, NoSuchAlgorithmException {
+    public static Response httpsPost(String url, Map<String, ?> map) throws IOException, KeyManagementException, NoSuchAlgorithmException {
         FormBody.Builder builder = new FormBody.Builder();
         for (Map.Entry<String, ?> entry : map.entrySet()) {
             String key = entry.getKey();
@@ -408,12 +405,12 @@ public class HttpUtils {
 
     private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
 
-    public static String httpUpload(String url, Map<String, ?> map) throws IOException {
+    public static Response httpUpload(String url, Map<String, ?> map) throws IOException {
         Request request = getUploadRequest(url, map);
         return syncRequest(httpClient, request);
     }
 
-    public static String httpsUpload(String url, Map<String, ?> map) throws IOException, KeyManagementException, NoSuchAlgorithmException {
+    public static Response httpsUpload(String url, Map<String, ?> map) throws IOException, KeyManagementException, NoSuchAlgorithmException {
         OkHttpClient httpClient = sslHttpsClient();
         Request request = getUploadRequest(url, map);
         return syncRequest(httpClient, request);

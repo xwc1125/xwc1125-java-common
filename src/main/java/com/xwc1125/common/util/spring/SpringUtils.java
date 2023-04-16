@@ -4,6 +4,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SpringUtils implements BeanFactoryPostProcessor {
+
     /**
      * Spring应用上下文环境
      */
@@ -22,6 +24,18 @@ public class SpringUtils implements BeanFactoryPostProcessor {
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         SpringUtils.beanFactory = beanFactory;
+    }
+
+    public static ConfigurableListableBeanFactory getBeanFactory() {
+        if (SpringUtils.beanFactory == null) {
+            DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
+            SpringUtils.beanFactory = factory;
+        }
+        return SpringUtils.beanFactory;
+    }
+
+    public static void addBean(String name, Object bean) throws BeansException {
+        getBeanFactory().configureBean(bean, name);
     }
 
     /**
@@ -33,7 +47,7 @@ public class SpringUtils implements BeanFactoryPostProcessor {
      */
     @SuppressWarnings("unchecked")
     public static <T> T getBean(String name) throws BeansException {
-        return (T) beanFactory.getBean(name);
+        return (T) getBeanFactory().getBean(name);
     }
 
     /**
@@ -44,7 +58,7 @@ public class SpringUtils implements BeanFactoryPostProcessor {
      * @throws BeansException
      */
     public static <T> T getBean(Class<T> clz) throws BeansException {
-        T result = (T) beanFactory.getBean(clz);
+        T result = (T) getBeanFactory().getBean(clz);
         return result;
     }
 
@@ -55,7 +69,7 @@ public class SpringUtils implements BeanFactoryPostProcessor {
      * @return boolean
      */
     public static boolean containsBean(String name) {
-        return beanFactory.containsBean(name);
+        return getBeanFactory().containsBean(name);
     }
 
     /**
@@ -66,7 +80,7 @@ public class SpringUtils implements BeanFactoryPostProcessor {
      * @throws NoSuchBeanDefinitionException
      */
     public static boolean isSingleton(String name) throws NoSuchBeanDefinitionException {
-        return beanFactory.isSingleton(name);
+        return getBeanFactory().isSingleton(name);
     }
 
     /**
@@ -75,7 +89,7 @@ public class SpringUtils implements BeanFactoryPostProcessor {
      * @throws NoSuchBeanDefinitionException
      */
     public static Class<?> getType(String name) throws NoSuchBeanDefinitionException {
-        return beanFactory.getType(name);
+        return getBeanFactory().getType(name);
     }
 
     /**
@@ -86,6 +100,6 @@ public class SpringUtils implements BeanFactoryPostProcessor {
      * @throws NoSuchBeanDefinitionException
      */
     public static String[] getAliases(String name) throws NoSuchBeanDefinitionException {
-        return beanFactory.getAliases(name);
+        return getBeanFactory().getAliases(name);
     }
 }

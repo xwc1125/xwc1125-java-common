@@ -1,8 +1,9 @@
 package com.xwc1125.common.database.mybatis.mapper;
 
-import tk.mybatis.mapper.common.*;
-import tk.mybatis.mapper.common.special.InsertListMapper;
-import tk.mybatis.mapper.common.special.InsertUseGeneratedKeysMapper;
+import tk.mybatis.mapper.common.ConditionMapper;
+import tk.mybatis.mapper.common.IdsMapper;
+import tk.mybatis.mapper.common.Mapper;
+import tk.mybatis.mapper.common.MySqlMapper;
 
 /**
  * Description:
@@ -14,6 +15,6 @@ import tk.mybatis.mapper.common.special.InsertUseGeneratedKeysMapper;
  * @Copyright: Copyright (c) 2017 <br>
  * @date 2017/12/6  18:24 <br>
  */
-public interface BaseDao<T> extends Mapper<T>, IdsMapper<T>, ConditionMapper<T>, MySqlMapper<T>, InsertListMapper<T>, InsertUseGeneratedKeysMapper<T> {
+public interface BaseDao<T> extends Mapper<T>, IdsMapper<T>, ConditionMapper<T>, MySqlMapper<T> {
     // 这里可以放一些公共的方法
 }
